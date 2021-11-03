@@ -7,6 +7,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using dcinc.api.entities;
+using FluentValidation;
 
 namespace dcinc.api
 {
@@ -26,55 +28,64 @@ namespace dcinc.api
       log.LogInformation("C# HTTP trigger function processed a request.");
       string message = string.Empty;
 
-      switch (req.Method)
+      try
       {
-        case "GET":
-          log.LogInformation("GET web meetings");
-          break;
+        switch (req.Method)
+        {
+          case "GET":
+            log.LogInformation("GET web meetings");
+            break;
 
-        case "POST":
-          log.LogInformation("POST web meetings");
+          case "POST":
+            log.LogInformation("POST web meetings");
 
-          string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-          dynamic data = JsonConvert.DeserializeObject(requestBody);
+            // リクエストボディからパラメータを取得
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-          string name = data?.name;
-          // 会議名が未指定の場合はエラーとして処理
-          if (string.IsNullOrEmpty(name))
-          {
-            return new BadRequestObjectResult("name is null or empty");
-          }
+            // エンティティを作成
+            WebMeeting webMeeting = new WebMeeting();
+            webMeeting.Name = data?.name;
+            webMeeting.StartDateTime = data?.startDateTime;
+            webMeeting.Url = data?.url;
+            webMeeting.RegisteredBy = data?.registeredBy;
+            webMeeting.SlackChannelId = data?.slackChannelId;
 
-          DateTime? startDateTime = data?.startDateTime;
-          // 日付が未指定もしくは本日よりも前のものであればエラーとして処理
-          if (!startDateTime.HasValue || startDateTime <= DateTime.Today)
-          {
-            return new BadRequestObjectResult("StartDateTime is invalid. Please specify the date and time after tomorrow.");
-          }
 
-          message = await AddWebMeeting(documentsOut, name, startDateTime.Value);
-          break;
+            // 入力値のチェック
+            var validator = new WebMeetingValidator();
+            validator.ValidateAndThrow(webMeeting);
 
-        default:
-          throw new InvalidOperationException($"Invalid method: method={req.Method}");
+            message = await AddWebMeeting(documentsOut, webMeeting);
+
+            break;
+
+          default:
+            throw new InvalidOperationException($"Invalid method: method={req.Method}");
+        }
       }
-
-
+      catch (Exception ex)
+      {
+        return new BadRequestObjectResult(ex.Message);
+      }
       return new OkObjectResult($"This HTTP triggered function executed successfully.\n{message}");
+
     }
 
     private static async Task<string> AddWebMeeting(IAsyncCollector<dynamic> documentsOut,
-             string name,
-             DateTime startDateTime)
+             WebMeeting webMeeting)
     {
       // Add a JSON document to the output container.
       var documentItem = new
       {
         // create a random ID
-        id = System.Guid.NewGuid().ToString(),
-        name = name,
-        date = startDateTime.Date.ToString("yyyy-MM-dd"),
-        startDateTime = $"{startDateTime:O}"
+        id = webMeeting.Id,
+        name = webMeeting.Name,
+        date = webMeeting.StartDateTime.ToString("yyyy-MM-dd"),
+        startDateTime = $"{webMeeting.StartDateTime:O}",
+        url = webMeeting.Url,
+        registeredBy = webMeeting.RegisteredBy,
+        slackChannelId = webMeeting.SlackChannelId
       };
 
       await documentsOut.AddAsync(documentItem);
