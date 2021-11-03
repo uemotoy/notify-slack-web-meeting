@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using dcinc.api.entities;
 using FluentValidation;
+using Newtonsoft.Json.Serialization;
 
 namespace dcinc.api
 {
@@ -46,7 +47,7 @@ namespace dcinc.api
             // エンティティを作成
             WebMeeting webMeeting = new WebMeeting();
             webMeeting.Name = data?.name;
-            webMeeting.StartDateTime = data?.startDateTime;
+            webMeeting.StartDateTime = data?.startDateTime ?? DateTime.MinValue;
             webMeeting.Url = data?.url;
             webMeeting.RegisteredBy = data?.registeredBy;
             webMeeting.SlackChannelId = data?.slackChannelId;
@@ -75,22 +76,12 @@ namespace dcinc.api
     private static async Task<string> AddWebMeeting(IAsyncCollector<dynamic> documentsOut,
              WebMeeting webMeeting)
     {
+      // 登録日時にUTCでの現在日時を設定
+      webMeeting.RegisteredAt = DateTime.UtcNow;
       // Add a JSON document to the output container.
-      var documentItem = new
-      {
-        // create a random ID
-        id = webMeeting.Id,
-        name = webMeeting.Name,
-        date = webMeeting.StartDateTime.ToString("yyyy-MM-dd"),
-        startDateTime = $"{webMeeting.StartDateTime:O}",
-        url = webMeeting.Url,
-        registeredBy = webMeeting.RegisteredBy,
-        slackChannelId = webMeeting.SlackChannelId
-      };
-
+      string documentItem = JsonConvert.SerializeObject(webMeeting, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
       await documentsOut.AddAsync(documentItem);
-
-      return JsonConvert.SerializeObject(documentItem);
+      return documentItem;
     }
   }
 }
