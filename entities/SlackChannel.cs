@@ -15,6 +15,7 @@ namespace dcinc.api.entities
       Id = Guid.NewGuid().ToString();
     }
 
+    #region プロパティ
     /// <summary>
     /// 一意とするID
     /// </summary>
@@ -35,5 +36,7 @@ namespace dcinc.api.entities
     /// 登録日時（UTC）
     /// </summary>
     public DateTime RegisteredAt { get; set; }
+
+    #endregion
   }
 }
