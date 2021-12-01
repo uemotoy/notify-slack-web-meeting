@@ -60,6 +60,13 @@ namespace dcinc.api.entities
     [JsonProperty("slackChannelId")]
     public string SlackChannelId { get; set; }
 
+    /// <summary>
+    /// Web会議の日付け（Unix 時刻(秒)）
+    /// </summary>
+    /// <returns></returns>
+    [JsonIgnore]
+    public long DateUnixTimeSeconds => new DateTimeOffset(Date).ToUnixTimeSeconds();
+
     #endregion
   }
 }
