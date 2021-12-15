@@ -35,7 +35,7 @@ namespace dcinc.api.entities
     /// <summary>
     /// 登録者
     /// </summary>
-    [JsonProperty("registeredNy")]
+    [JsonProperty("registeredBy")]
     public string RegisteredBy { get; set; }
     /// <summary>
     /// 登録日時（UTC）

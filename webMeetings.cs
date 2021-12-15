@@ -19,7 +19,7 @@ using dcinc.api.entities;
 using dcinc.api.queries;
 namespace dcinc.api
 {
-  public static class webMeetings
+  public static class WebMeetings
   {
 
     #region Web会議情報を登録する
@@ -151,7 +151,7 @@ namespace dcinc.api
     /// <param name="queryParameter">抽出条件パラメータ</param>
     /// <param name="log">ロガー</param>
     /// <returns></returns>
-    private static async Task<IEnumerable<WebMeeting>> GetWebMeetings(
+    internal static async Task<IEnumerable<WebMeeting>> GetWebMeetings(
       DocumentClient client,
       WebMeetingsQueryParameter queryParameter,
       ILogger log)
