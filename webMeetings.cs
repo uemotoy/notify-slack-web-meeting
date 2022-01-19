@@ -162,6 +162,7 @@ namespace dcinc.api
       IDocumentQuery<WebMeeting> query = client.CreateDocumentQuery<WebMeeting>(collectionUri, new FeedOptions { EnableCrossPartitionQuery = true, PopulateQueryMetrics = true })
       .Where(queryParameter.GetWhereExpression())
       .AsDocumentQuery();
+      log.LogInformation(query.ToString());
 
       var documentItems = new List<WebMeeting>();
       while (query.HasMoreResults)
@@ -187,7 +188,7 @@ namespace dcinc.api
     /// <returns>Web会議情報</returns>
     [FunctionName("GetWebMeetingById")]
     public static async Task<IActionResult> GetWebMeetingById(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "WebMeetings/{id}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "WebMeetings/{ids}")] HttpRequest req,
         [CosmosDB(
                 databaseName: "notify-slack-web-meeting-db",
                 collectionName: "WebMeetings",
@@ -200,13 +201,13 @@ namespace dcinc.api
 
       try
       {
-        string id = req.RouteValues["id"].ToString();
-        log.LogInformation($"GET webMeetings/{id}");
+        string ids = req.RouteValues["ids"].ToString();
+        log.LogInformation($"GET webMeetings/{ids}");
 
         // クエリパラメータから検索条件パラメータを設定
         WebMeetingsQueryParameter queryParameter = new WebMeetingsQueryParameter()
         {
-          Id = id
+          Ids = ids
         };
 
         // Web会議情報を取得
@@ -214,7 +215,7 @@ namespace dcinc.api
 
         if (!documentItems.Any())
         {
-          return new BadRequestObjectResult($"Target item not found. Id={id}");
+          return new BadRequestObjectResult($"Target item not found. Ids={ids}");
         }
         message = JsonConvert.SerializeObject(documentItems);
       }
@@ -237,7 +238,7 @@ namespace dcinc.api
     /// <returns>削除したWeb会議情報</returns>
     [FunctionName("DeleteWebMeetingById")]
     public static async Task<IActionResult> DeleteWebMeetingById(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "WebMeetings/{id}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "WebMeetings/{ids}")] HttpRequest req,
         [CosmosDB(
                 databaseName: "notify-slack-web-meeting-db",
                 collectionName: "WebMeetings",
@@ -250,15 +251,15 @@ namespace dcinc.api
 
       try
       {
-        string id = req.RouteValues["id"].ToString();
-        log.LogInformation($"Delete webMeetings/{id}");
+        string ids = req.RouteValues["ids"].ToString();
+        log.LogInformation($"Delete webMeetings/{ids}");
 
         // Web会議情報を取得
-        var documentItems = await DeleteWebMeetingById(client, id, log);
+        var documentItems = await DeleteWebMeetingById(client, ids, log);
 
         if (!documentItems.Any())
         {
-          return new BadRequestObjectResult($"Target item not found. WebMeeting:id={id}");
+          return new BadRequestObjectResult($"Target item not found. WebMeeting:id={ids}");
         }
         message = JsonConvert.SerializeObject(documentItems);
       }
@@ -270,14 +271,14 @@ namespace dcinc.api
       return new OkObjectResult($"This HTTP triggered function executed successfully.\n{message}");
     }
 
-    private static async Task<IEnumerable<WebMeeting>> DeleteWebMeetingById(DocumentClient client, string id, ILogger log)
+    internal static async Task<IEnumerable<WebMeeting>> DeleteWebMeetingById(DocumentClient client, string ids, ILogger log)
     {
       // 削除に必要なパーティションキーを取得するため、Web会議情報を取得後に削除する。
 
       // クエリパラメータに削除するWeb会議情報のIDを設定
       WebMeetingsQueryParameter queryParameter = new WebMeetingsQueryParameter()
       {
-        Id = id
+        Ids = ids
       };
 
       // Web会議情報を取得
@@ -289,7 +290,7 @@ namespace dcinc.api
         var partitionKey = documentItem.DateUnixTimeSeconds;
 
         // Web会議情報を削除
-        Uri documentUri = UriFactory.CreateDocumentUri("notify-slack-web-meeting-db", "WebMeetings", id);
+        Uri documentUri = UriFactory.CreateDocumentUri("notify-slack-web-meeting-db", "WebMeetings", documentItem.Id);
 
         await client.DeleteDocumentAsync(documentUri, new RequestOptions() { PartitionKey = new PartitionKey(partitionKey) });
 
