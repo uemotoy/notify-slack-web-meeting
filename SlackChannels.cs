@@ -176,7 +176,7 @@ namespace dcinc.api
     /// <param name="log">ロガー</param>
     /// <returns>削除したSlackチャンネル情報</returns>
     [FunctionName("GetSlackChannelById")]
-    public static async Task<IActionResult> GetSlackChannelById(
+    public static IActionResult GetSlackChannelById(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "SlackChannels/{id}")] HttpRequest req,
         [CosmosDB(
                 databaseName: "notify-slack-web-meeting-db",
