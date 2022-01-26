@@ -191,7 +191,7 @@ namespace dcinc.api
       if (slackChannel == null)
       {
         string id = req.RouteValues["id"].ToString();
-        return new BadRequestObjectResult($"Target item not found. Id={id}");
+        return new NotFoundObjectResult($"Target item not found. Id={id}");
       }
 
       return new OkObjectResult($"This HTTP triggered function executed successfully.\n{JsonConvert.SerializeObject(slackChannel)}");
@@ -230,7 +230,7 @@ namespace dcinc.api
 
         if (!documentItems.Any())
         {
-          return new BadRequestObjectResult($"Target item not found. Id={id}");
+          return new NotFoundObjectResult($"Target item not found. Id={id}");
         }
         message = JsonConvert.SerializeObject(documentItems);
 

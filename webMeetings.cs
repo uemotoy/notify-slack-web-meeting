@@ -215,7 +215,7 @@ namespace dcinc.api
 
         if (!documentItems.Any())
         {
-          return new BadRequestObjectResult($"Target item not found. Ids={ids}");
+          return new NotFoundObjectResult($"Target item not found. Ids={ids}");
         }
         message = JsonConvert.SerializeObject(documentItems);
       }
@@ -259,7 +259,7 @@ namespace dcinc.api
 
         if (!documentItems.Any())
         {
-          return new BadRequestObjectResult($"Target item not found. WebMeeting:id={ids}");
+          return new NotFoundObjectResult($"Target item not found. WebMeeting:id={ids}");
         }
         message = JsonConvert.SerializeObject(documentItems);
       }
