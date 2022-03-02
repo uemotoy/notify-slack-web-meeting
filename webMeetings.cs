@@ -73,7 +73,7 @@ namespace dcinc.api
       {
         return new BadRequestObjectResult(ex.Message);
       }
-      return new OkObjectResult($"This HTTP triggered function executed successfully.\n{message}");
+      return new OkObjectResult(message);
 
     }
 
@@ -141,7 +141,7 @@ namespace dcinc.api
         return new BadRequestObjectResult(ex);
       }
 
-      return new OkObjectResult($"This HTTP triggered function executed successfully.\n{message}");
+      return new OkObjectResult(message);
     }
 
     /// <summary>
@@ -224,7 +224,7 @@ namespace dcinc.api
         return new BadRequestObjectResult(ex);
       }
 
-      return new OkObjectResult($"This HTTP triggered function executed successfully.\n{message}");
+      return new OkObjectResult(message);
     }
     #endregion
 
@@ -268,7 +268,7 @@ namespace dcinc.api
         return new BadRequestObjectResult(ex);
       }
 
-      return new OkObjectResult($"This HTTP triggered function executed successfully.\n{message}");
+      return new OkObjectResult(message);
     }
 
     internal static async Task<IEnumerable<WebMeeting>> DeleteWebMeetingById(DocumentClient client, string ids, ILogger log)
