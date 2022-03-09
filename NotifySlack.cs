@@ -45,7 +45,7 @@ namespace dcinc.jobs
     {
 
       // 本日の会議一覧を取得する
-      var today = DateTime.UtcNow.Date.ToString("yyyy-MM-dd");
+      var today = DateTime.Now.Date.ToString("yyyy-MM-dd");
       var param = new WebMeetingsQueryParameter
       {
         FromDate = today,
