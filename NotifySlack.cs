@@ -35,7 +35,7 @@ namespace dcinc.jobs
     // DEBUG："0 */5 * * * *"
     // アプリケーション設定：WEBSITE_TIME_ZONE=Tokyo Standard Time
     [FunctionName("NotifySlack")]
-    public async Task Run([TimerTrigger("0 0 9 * * 1-5")] TimerInfo myTimer,
+    public async Task Run([TimerTrigger("0 0 7,9 * * 1-5")] TimerInfo myTimer,
      [CosmosDB(
                 databaseName: "notify-slack-web-meeting-db",
                 collectionName: "WebMeetings",
