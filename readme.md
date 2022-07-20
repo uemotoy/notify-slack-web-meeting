@@ -1,12 +1,12 @@
-# Notify Slack of web meeting
+# Notify Slack Web meeting
 
-[![Build](https://github.com/yamadakou/notify-slack-of-web-meeting/actions/workflows/build.yml/badge.svg)](https://github.com/yamadakou/notify-slack-of-web-meeting/workflows/build.yml)
+[![Build](https://github.com/uemotoy/notify-slack-web-meeting/actions/workflows/build.yml/badge.svg)](https://github.com/uemotoy/notify-slack-web-meeting/actions/workflows/build.yml)
 
 当日の Web 会議の情報を Slack に通知する Web サービスです。
 
 ## 概要
 
-### Notify Slack of web meeting の特徴
+### Notify Slack Web meeting の特徴
 
 - テレワークが増え会議も Web 会議が主流となり、毎日、Web 会議の URL を Outlook から参照する手間が増えました。
 - そこで、今日、予定されている Web 会議を毎朝 Slack で確認できるよう、本サービスでは以下の機能を提供します。
@@ -15,8 +15,8 @@
   - 朝 9 時に当日の Web 会議情報を指定の Slack チャンネルに通知する定期バッチ
 - Web 会議情報や通知先の Slack チャンネル情報の登録などは自由にクライアントを用意することで、 Outlook や Google カレンダーなど好みの予定表から Web 会議情報を抽出し、指定した Slack チャンネルに通知することが可能です。
   - Outlook クライアントからログインユーザーの翌日の Web 会議情報を登録するコンソールアプリは下記リポジトリで提供しており、 Windows タスクスケジューラで毎日実行するよう登録することで、自動的に毎朝 9 時に当日の Web 会議情報を Slack で確認できます。
-    - [Notify Slack of web meeting CLI](https://github.com/yamadakou/notify-slack-of-web-meeting.cli)
-      - https://github.com/yamadakou/notify-slack-of-web-meeting.cli
+    - [Notify Slack Web Meeting CLI](https://github.com/uemotoy/notify-slack-web-meeting-cli)
+      - https://github.com/uemotoy/notify-slack-web-meeting-cli
 
 ### 機能説明
 
@@ -298,5 +298,5 @@ Visual Studio Code で、ビルドと Azure Functions への発行ができる�
 
 ## （関連リポジトリ）
 
-- Notify Slack of web meeting CLI
-  - https://github.com/yamadakou/notify-slack-of-web-meeting.cli
+- Notify Slack Web Meeting CLI
+  - https://github.com/uemotoy/notify-slack-web-meeting-cli
