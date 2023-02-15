@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -118,6 +120,12 @@ namespace dcinc.api
 
       try
       {
+
+        if (!await AuthUtil.checkAuthorization(client, req, log))
+        {
+          return new BadRequestObjectResult("このユーザーはサービスにアクセスする権限がありません") { StatusCode = StatusCodes.Status403Forbidden };
+        };
+
         log.LogInformation("GET webMeetings");
 
         // クエリパラメータから検索条件パラメータを設定
