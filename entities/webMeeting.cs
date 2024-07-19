@@ -1,72 +1,65 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+
+using dcinc.json.converters;
 
 namespace dcinc.api.entities
 {
-  /// <summary>
-  /// Web会議を表す
-  /// </summary>
-  public class WebMeeting
-  {
     /// <summary>
-    /// 既定のコンストラクタ
+    /// Web会議を表す
     /// </summary>
-    public WebMeeting()
+    public class WebMeeting
     {
-      Id = Guid.NewGuid().ToString();
+        /// <summary>
+        /// 既定のコンストラクタ
+        /// </summary>
+            public WebMeeting()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+        #region プロパティ
+        /// <summary>
+        /// 一意とするID
+        /// </summary>
+        [JsonPropertyName("id")]
+         public string Id { get; set; }
+        /// <summary>
+        /// Web会議名
+        /// </summary>
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        /// <summary>
+        /// Web会議の開始日時
+        /// </summary>
+        [JsonPropertyName("startDateTime")]
+        public DateTime StartDateTime { get; set; }
+        /// <summary>
+        /// Web会議の日付
+        /// </summary>
+        [JsonPropertyName("date")]
+        [JsonConverter(typeof(UnixEpochDateTimeConverter))]
+        public DateTime Date => StartDateTime.Date.ToUniversalTime();
+        /// <summary>
+        /// Web会議のURL
+        /// </summary>
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
+        /// <summary>
+        /// 登録者
+        /// </summary>
+        [JsonPropertyName("registeredBy")]
+        public string RegisteredBy { get; set; }
+        /// <summary>
+        /// 登録日時（UTC）
+        /// </summary>
+        [JsonPropertyName("registeredAt")]
+        public DateTime RegisteredAt { get; set; }
+        /// <summary>
+        /// 通知先のSlackチャンネル
+        /// </summary>
+        [JsonPropertyName("slackChannelId")]
+        public string SlackChannelId { get; set; }
+
+        #endregion
     }
-
-    #region プロパティ
-
-    /// <summary>
-    /// 一意とするID
-    /// </summary>
-    [JsonProperty("id")]
-    public string Id { get; set; }
-    /// <summary>
-    /// Web会議名
-    /// </summary>
-    [JsonProperty("name")]
-    public string Name { get; set; }
-    /// <summary>
-    /// Web会議の開始日時
-    /// </summary>
-    [JsonProperty("startDateTime")]
-    public DateTime StartDateTime { get; set; }
-    /// <summary>
-    /// Web会議の日付
-    /// </summary>
-    [JsonProperty("date")]
-    [JsonConverter(typeof(Newtonsoft.Json.Converters.UnixDateTimeConverter))]
-    public DateTime Date => StartDateTime.Date.ToUniversalTime();
-    /// <summary>
-    /// Web会議のURL
-    /// </summary>
-    [JsonProperty("url")]
-    public string Url { get; set; }
-    /// <summary>
-    /// 登録者
-    /// </summary>
-    [JsonProperty("registeredBy")]
-    public string RegisteredBy { get; set; }
-    /// <summary>
-    /// 登録日時（UTC）
-    /// </summary>
-    [JsonProperty("registeredAt")]
-    public DateTime RegisteredAt { get; set; }
-    /// <summary>
-    /// 通知先のSlackチャンネル
-    /// </summary>
-    [JsonProperty("slackChannelId")]
-    public string SlackChannelId { get; set; }
-
-    /// <summary>
-    /// Web会議の日付け（Unix 時刻(秒)）
-    /// </summary>
-    /// <returns></returns>
-    [JsonIgnore]
-    public long DateUnixTimeSeconds => new DateTimeOffset(Date).ToUnixTimeSeconds();
-
-    #endregion
-  }
 }
