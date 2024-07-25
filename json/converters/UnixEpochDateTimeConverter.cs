@@ -19,7 +19,9 @@ namespace dcinc.json.converters
             long unixTime = formatted.FromJsonFormat();
 
             // Unix エポック時間は UTC 時刻における1970年1月1日午前0時0分0秒（Unix Xエポック）からの経過秒数であり、秒単位で追加する。
-            return DateTime.UnixEpoch.AddMicroseconds(unixTime);
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime dateTime = epoch.AddSeconds(unixTime);
+            return dateTime.ToLocalTime(); // ローカル時刻に変換
         }
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
@@ -69,21 +71,39 @@ namespace dcinc.json.converters
         /// <summary>
         /// Unix エポック時間のJSON形式文字列からUnix エポック時間にします。
         /// </summary>
-        /// <param name="unixTimeJsonString"></param>
+        /// <param name="dateTimeString"></param>
         /// <returns>Unix エポック時間</returns>
-        /// <exception cref="JsonException">無効な JSON テキストが検出された場合、定義された最大深度が渡された場合、または JSON テキストがオブジェクトのプロパティの型と互換性がない場合にスロー</exception>
-        public static long FromJsonFormat(this string unixTimeJsonString)
+        public static long FromJsonFormat(this string dateTimeString)
         {
-            Match match = s_regex.Match(unixTimeJsonString);
 
-            if (
-                    !match.Success
-                    || !long.TryParse(match.Groups[1].Value, System.Globalization.NumberStyles.Integer, CultureInfo.InvariantCulture, out long unixTime))
+            // DateTimeOffsetに変換
+            DateTimeOffset dateTimeOffset;
+            bool success = DateTimeOffset.TryParseExact(
+                 dateTimeString,
+                 "yyyy-MM-ddTHH:mm:sszzz",
+                 CultureInfo.InvariantCulture,
+                 DateTimeStyles.None,
+             out dateTimeOffset);
+
+            if (success)
             {
-                throw new JsonException();
+                DateTimeOffset localDateTimeOffset = dateTimeOffset.ToLocalTime();
+                // Unixエポック時間に変換
+                long unixTime = localDateTimeOffset.ToUnixTimeSeconds();
+                return unixTime;
+
+            }
+            else
+            {
+                // 現在の時刻を取得
+                DateTimeOffset now = DateTimeOffset.UtcNow;
+
+                // Unixエポック時間に変換
+                long unixTimeSeconds = now.ToUnixTimeSeconds();
+
+                return unixTimeSeconds;
             }
 
-            return unixTime;
         }
     }
 }

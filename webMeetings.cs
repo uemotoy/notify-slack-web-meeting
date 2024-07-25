@@ -77,6 +77,7 @@ namespace dcinc.api
                     SlackChannelId = data?.SlackChannelId
                 };
 
+
                 // 入力値チェックを行う
                 WebMeetingValidator validator = new WebMeetingValidator();
                 validator.ValidateAndThrow(webMeeting);
@@ -86,7 +87,7 @@ namespace dcinc.api
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult(new {Message = ex.Message, StackTrace = ex.StackTrace});
+                return new BadRequestObjectResult(new { Message = ex.Message, StackTrace = ex.StackTrace });
             }
 
             return new OkObjectResult(message);
@@ -155,7 +156,7 @@ namespace dcinc.api
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult(new {Message = ex.Message, StackTrace = ex.StackTrace});
+                return new BadRequestObjectResult(new { Message = ex.Message, StackTrace = ex.StackTrace });
             }
 
             return new OkObjectResult(message);
@@ -226,7 +227,7 @@ namespace dcinc.api
                 // Web会議情報を取得
                 var documentItems = await GetWebMeetings(client, queryParameter);
 
-                if(!documentItems.Any())
+                if (!documentItems.Any())
                 {
                     return new NotFoundObjectResult($"Target item not found. Id={ids}");
                 }
@@ -234,7 +235,7 @@ namespace dcinc.api
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult(new {Message = ex.Message, StackTrace = ex.StackTrace});
+                return new BadRequestObjectResult(new { Message = ex.Message, StackTrace = ex.StackTrace });
             }
 
             return new OkObjectResult(message);
@@ -269,7 +270,7 @@ namespace dcinc.api
                 // Web会議情報を削除
                 var documentItems = await DeleteWebMeetingById(client, ids);
 
-                if(!documentItems.Any())
+                if (!documentItems.Any())
                 {
                     return new NotFoundObjectResult($"Target item not found. Id={ids}");
                 }
@@ -278,7 +279,7 @@ namespace dcinc.api
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult(new {Message = ex.Message, StackTrace = ex.StackTrace});
+                return new BadRequestObjectResult(new { Message = ex.Message, StackTrace = ex.StackTrace });
             }
 
             return new OkObjectResult(message);
